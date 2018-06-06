@@ -286,7 +286,7 @@ class OpenTok {
         if (!is_array($options)) {
             $options = array('name' => $options);
         }
-        
+
         // unpack optional arguments (merging with default values) into named variables
         $defaults = array(
             'name' => null,
@@ -294,15 +294,20 @@ class OpenTok {
             'hasAudio' => true,
             'outputMode' => OutputMode::COMPOSED,
             'resolution' => null,
+            'layout' => null
         );
         $options = array_merge($defaults, array_intersect_key($options, $defaults));
-        list($name, $hasVideo, $hasAudio, $outputMode, $resolution) = array_values($options);
+        list($name, $hasVideo, $hasAudio, $outputMode, $resolution, $layout) = array_values($options);
         // validate arguments
         Validators::validateSessionId($sessionId);
         Validators::validateArchiveName($name);
         Validators::validateArchiveHasVideo($hasVideo);
         Validators::validateArchiveHasAudio($hasAudio);
         Validators::validateArchiveOutputMode($outputMode);
+        // TODO: validate $layout
+        if (is_null($resolution) || empty($resolution)) {
+          unset($options['resolution']);
+        }
 
         if ((is_null($resolution) || empty($resolution)) && $outputMode === OutputMode::COMPOSED) {
             $options['resolution'] = "640x480";
